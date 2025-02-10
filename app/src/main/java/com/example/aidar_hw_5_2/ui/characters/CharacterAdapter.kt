@@ -11,7 +11,6 @@ import com.example.aidar_hw_5_2.databinding.ItemCharacterBinding
 class CharacterAdapter: RecyclerView.Adapter<CharacterAdapter.ViewHolder>() {
 
     private val characterList = mutableListOf<Character>()
-
     inner class ViewHolder(private val binding: ItemCharacterBinding) :
             RecyclerView.ViewHolder(binding.root) {
                 fun onBind(character: Character) = with(binding) {

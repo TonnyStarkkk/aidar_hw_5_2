@@ -6,18 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.aidar_hw_5_2.databinding.FragmentCharacterBinding
+import dev.androidbroadcast.vbpd.viewBinding
 
-class CharacterFragment: Fragment() {
+class CharacterFragment : Fragment() {
 
-    private var _binding: FragmentCharacterBinding? = null
-    private val binding get() = _binding!!
+    private val binding by viewBinding(FragmentCharacterBinding::bind)
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentCharacterBinding.inflate(inflater, container, false)
-        return binding.root
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
     }
 }
