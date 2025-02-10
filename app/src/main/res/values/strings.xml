@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">aidar_hw_5_2</string>
+    <string name="color_indicator_all">color_indicator_all\n</string>
+    <string name="rickk_sanchez">Rickk Sanchez</string>
+    <string name="alive_human">Alive - Human</string>
+    <string name="last_known_location">Last known location:</string>
+    <string name="citadel_of_ricks">Citadel of Ricks</string>
+    <string name="first_seen_in">First seen in:</string>
+    <string name="pilot">Pilot</string>
+    <string name="error_occurred">Error occurred</string>
+</resources>
