@@ -18,8 +18,7 @@
         android:name="com.example.aidar_hw_5_2.ui.fragments.character_details.CharactersDetailFragment"
         android:label="CharactersDetailFragment" >
         <argument
-            android:name="character_id"
-            app:argType="integer"
-            android:defaultValue="-1"/>
+            android:name="id"
+            app:argType="integer" />
     </fragment>
 </navigation>

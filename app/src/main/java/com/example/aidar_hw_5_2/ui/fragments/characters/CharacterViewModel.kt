@@ -1,41 +1,40 @@
 package com.example.aidar_hw_5_2.ui.fragments.characters
 
-import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.liveData
+import androidx.lifecycle.map
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.liveData
 import com.example.aidar_hw_5_2.data.api.ApiService
-import com.example.aidar_hw_5_2.data.model.characters.BaseResponse
+import com.example.aidar_hw_5_2.data.model.characters.Character
+import com.example.aidar_hw_5_2.data.paging.CharactersPagingSource
+import com.example.aidar_hw_5_2.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import javax.inject.Inject
 
 @HiltViewModel
 class CharacterViewModel @Inject constructor(private val api: ApiService) : ViewModel() {
 
-    private val _characters = MutableLiveData<BaseResponse>()
-    val characters: LiveData<BaseResponse> get() = _characters
+    fun getAllCharacters(): LiveData<Resource<PagingData<Character>>> {
+        return liveData {
+            emit(Resource.Loading())
+            try {
+                val pager = Pager(
+                    config = PagingConfig(
+                        pageSize = 20,
+                        initialLoadSize = 15,
+                        enablePlaceholders = false
+                    ),
+                    pagingSourceFactory = { CharactersPagingSource(api) }
+                ).liveData
 
-    private val _error = MutableLiveData<String>()
-    val error: LiveData<String> get() = _error
-
-    fun getAllCharacters() {
-        api.getAllCharacters().enqueue(object : Callback<BaseResponse> {
-            override fun onResponse(call: Call<BaseResponse>, response: Response<BaseResponse>) {
-                if (response.isSuccessful) {
-                    response.body()?.let {
-                        _characters.postValue(it)
-                    }
-                } else {
-                    _error.postValue("Error: ${response.code()}")
-                }
+                emitSource(pager.map { Resource.Success(it) })
+            } catch (e: Exception) {
+                emit(Resource.Error("Failed to load: ${e.message}"))
             }
-
-            override fun onFailure(call: Call<BaseResponse>, thr: Throwable) {
-                _error.postValue(thr.localizedMessage ?: "Unknown error")
-            }
-        })
+        }
     }
 }

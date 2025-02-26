@@ -1,14 +1,17 @@
 package com.example.aidar_hw_5_2.ui.fragments.character_details
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.example.aidar_hw_5_2.R
 import com.example.aidar_hw_5_2.databinding.FragmentCharacterDetailBinding
+import com.example.aidar_hw_5_2.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 import dev.androidbroadcast.vbpd.viewBinding
 
@@ -17,45 +20,45 @@ class CharactersDetailFragment : Fragment(R.layout.fragment_character_detail) {
 
     private val binding by viewBinding(FragmentCharacterDetailBinding::bind)
     private val viewModel: CharacterDetailViewModel by viewModels()
+    private val args: CharactersDetailFragmentArgs by navArgs()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val characterId = arguments?.getInt("character_id") ?: return
-        viewModel.getCharacterById(characterId)
-
         observeViewModel()
-
         setupExpandableLayouts()
-
     }
 
-    private fun observeViewModel() {
-        viewModel.character.observe(viewLifecycleOwner) { character ->
-            with(binding) {
-                characterName.text = character.name
-                characterStatus.text = character.status
-                characterLocation.text = character.location.name
-                characterGender.text = character.gender
+    @SuppressLint("SetTextI18n")
+    private fun observeViewModel() = with(binding) {
+        viewModel.getCharacterById(args.id).observe(viewLifecycleOwner) { resource ->
+            when (resource) {
+                is Resource.Success -> {
+                characterName.text = resource.data.name
+                characterStatus.text = resource.data.status
+                characterLocation.text = resource.data.location.name
+                characterGender.text = resource.data.gender
 
                 Glide.with(this@CharactersDetailFragment)
-                    .load(character.image)
+                    .load(resource.data.image)
                     .into(characterImage)
 
                 expandable.secondLayout.findViewById<TextView>(R.id.tv_character_info)?.text =
-                    "ID: ${character.id}\nSpecies: ${character.species}\nType: ${character.type}"
+                    "ID: ${resource.data.id}\nSpecies: ${resource.data.species}\nType: ${resource.data.type}"
 
                 expandable2.secondLayout.findViewById<TextView>(R.id.tv_origin)?.text =
-                    "Origin: ${character.origin.name}"
+                    "Origin: ${resource.data.origin.name}"
 
                 expandable3.secondLayout.findViewById<TextView>(R.id.tv_first_seen)?.text =
-                    "First seen in: ${character.episode.firstOrNull() ?: "Unknown"}"
+                    "First seen in: ${resource.data.episode.firstOrNull() ?: "Unknown"}"
 
             }
-        }
+                is Resource.Error -> {
+                    Toast.makeText(requireContext(), resource.message, Toast.LENGTH_SHORT).show()
 
-        viewModel.error.observe(viewLifecycleOwner) { error ->
-            Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
+                }
+                is Resource.Loading -> {}
+            }
         }
     }
 
