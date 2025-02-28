@@ -1,6 +1,7 @@
 package com.example.aidar_hw_5_2.ui.fragments.characters
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.map
